@@ -50,8 +50,20 @@ async function loadConfig() {
       return;
     }
   } catch {
-    console.warn('Не удалось загрузить конфиг с сервера');
+    console.warn('API недоступен, пробуем data/config.json');
   }
+
+  try {
+    const res = await fetch('data/config.json');
+    if (res.ok) {
+      CONFIG = { ...DEFAULT_CONFIG, ...await res.json() };
+      CONFIG.theme = mergeTheme(CONFIG.theme);
+      return;
+    }
+  } catch {
+    console.warn('Не удалось загрузить data/config.json');
+  }
+
   CONFIG = { ...DEFAULT_CONFIG };
   CONFIG.theme = mergeTheme(CONFIG.theme);
 }

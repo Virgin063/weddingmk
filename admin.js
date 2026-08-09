@@ -6,7 +6,30 @@ const saveStatus = document.getElementById('save-status');
 const galleryEditor = document.getElementById('gallery-editor');
 const programEditor = document.getElementById('program-editor');
 
-let config = {};
+const IS_GITHUB_PAGES = window.location.hostname.endsWith('github.io');
+
+async function serverAvailable() {
+  try {
+    const res = await fetch('/api/admin/session', { credentials: 'include' });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+function showStaticHostWarning() {
+  loginError.innerHTML = [
+    '<strong>На GitHub Pages админка не работает</strong> — здесь нет сервера.',
+    'Чтобы редактировать сайт онлайн:',
+    '1) Задеплойте на <a href="https://render.com" target="_blank" rel="noopener">Render.com</a> (бесплатно)',
+    '2) Откройте <code>/admin</code> на ссылке Render',
+    'Пароль: <strong>260626MK</strong>',
+    '<br>Или редактируйте <code>data/config.json</code> локально и делайте git push.',
+  ].join('<br>');
+  loginError.hidden = false;
+  loginForm.querySelector('button[type="submit"]').disabled = true;
+  document.getElementById('admin-code').disabled = true;
+}
 
 const FIELD_IDS = [
   'marqueeText', 'splashTitle', 'splashSubtitle', 'splashHint', 'splashButtonText',
@@ -348,6 +371,18 @@ document.getElementById('save-btn').addEventListener('click', async () => {
 
 (async () => {
   showLogin();
+
+  if (IS_GITHUB_PAGES) {
+    showStaticHostWarning();
+    return;
+  }
+
+  const hasServer = await serverAvailable();
+  if (!hasServer) {
+    showStaticHostWarning();
+    return;
+  }
+
   const authed = await checkSession();
   if (authed) {
     try {

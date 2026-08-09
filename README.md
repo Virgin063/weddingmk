@@ -1,61 +1,42 @@
 # Сайт-приглашение на свадьбу
 
-Готово к публикации: клонируйте репозиторий, запустите — всё уже настроено.
+## Два способа публикации
 
-## Админ-панель
+| | GitHub Pages | Render (нужен для админки) |
+|---|---|---|
+| Сайт для гостей | ✅ [virgin063.github.io/weddingmk](https://virgin063.github.io/weddingmk) | ✅ |
+| Админ-панель `/admin` | ❌ не работает | ✅ работает |
+| Пароль админки | — | `260626MK` |
 
-| | |
-|---|---|
-| URL | `/admin` |
-| Пароль | `260626MK` |
+**GitHub Pages** — только статика (HTML/CSS). Вход в админку там **никогда не заработает**, это ограничение GitHub, не баг.
 
-## Локальный запуск
+## Админка онлайн (Render, 5 минут)
+
+1. [render.com](https://render.com) → войти через GitHub
+2. **New** → **Blueprint**
+3. Репозиторий `Virgin063/weddingmk` → **Apply**
+4. Дождаться деплоя → открыть ссылку вида `https://weddingmk-xxxx.onrender.com/admin`
+5. Пароль: **260626MK**
+
+Изменения в админке на Render сохраняются на сервере. Чтобы они появились на GitHub Pages — скопируйте `data/config.json` и сделайте `git push`.
+
+## Локально
 
 ```bash
 npm install
 npm start
 ```
 
-Сайт: http://localhost:8080
+Сайт: http://localhost:8080 · Админ: http://localhost:8080/admin
 
-## Деплой на Render (бесплатно, без настроек)
+## Обновление GitHub Pages
 
-1. Зайдите на [render.com](https://render.com) → **New** → **Blueprint**
-2. Подключите репозиторий `Virgin063/weddingmk`
-3. Render подхватит `render.yaml` автоматически
-4. Нажмите **Apply** — через 2–3 минуты сайт будет онлайн
-
-Переменные окружения уже в `.env` внутри репозитория — ничего дописывать не нужно.
-
-## Деплой на VPS
+После правок в `data/config.json`:
 
 ```bash
-git clone https://github.com/Virgin063/weddingmk.git
-cd weddingmk
-npm install --production
-npm start
-```
-
-Для постоянной работы:
-
-```bash
-npm install -g pm2
-pm2 start server.js --name weddingmk
-pm2 save
-pm2 startup
-```
-
-## Обновление на GitHub
-
-```bash
-git add .
-git commit -m "обновление"
+git add data/config.json
+git commit -m "Обновить контент"
 git push
 ```
 
-На Render после push сайт обновится сам.
-
-## Важно
-
-- Фото в галерее — по ссылкам (URL), загружайте на imgur / Google Drive / хостинг и вставляйте в админке
-- На бесплатном Render изменения в админке могут сброситься после перезапуска сервера (диск временный). Тексты и фото лучше один раз настроить локально и закоммитить `data/config.json`
+Сайт на GitHub Pages обновится через 1–2 минуты.
