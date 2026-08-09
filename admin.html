@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ | Приглашение</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <h1 class="login-title">Админ-панель</h1>
+      <p class="login-subtitle">Приглашение на свадьбу</p>
+      <form id="login-form">
+        <label for="admin-code">Код администратора</label>
+        <input type="password" id="admin-code" placeholder="ADMIN2026" required autocomplete="off">
+        <button type="submit" class="btn btn-primary">Войти</button>
+      </form>
+      <p id="login-error" class="error-msg" hidden></p>
+    </div>
+  </div>
+
+  <div id="admin-app" class="admin-app" style="display:none">
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <h1>Приглашение · админ</h1>
+        <div class="admin-header__actions">
+          <a href="/" class="btn btn-outline" target="_blank">Открыть сайт</a>
+          <button type="button" id="logout-btn" class="btn btn-outline">Выйти</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div id="save-status" class="save-status" hidden></div>
+
+      <section class="admin-section">
+        <h2>Дизайн и цвета</h2>
+        <p class="section-hint">Готовые палитры или свои цвета. Не забудьте нажать «Сохранить».</p>
+        <div class="theme-presets" id="theme-presets"></div>
+        <div class="theme-fields" id="theme-fields"></div>
+        <div class="theme-preview" id="theme-preview" aria-hidden="true">
+          <span class="theme-preview__bg">Фон</span>
+          <span class="theme-preview__accent">Акцент</span>
+          <span class="theme-preview__primary">Золото</span>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Заставка</h2>
+        <div class="field"><label for="marqueeText">Бегущая строка</label><input type="text" id="marqueeText"></div>
+        <div class="field"><label for="splashTitle">Заголовок</label><input type="text" id="splashTitle"></div>
+        <div class="field"><label for="splashSubtitle">Подзаголовок</label><input type="text" id="splashSubtitle"></div>
+        <div class="field"><label for="splashHint">Подсказка</label><input type="text" id="splashHint"></div>
+        <div class="field"><label for="splashButtonText">Текст кнопки</label><input type="text" id="splashButtonText"></div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Hero — имена</h2>
+        <div class="field-row">
+          <div class="field"><label for="brideName">Имя невесты</label><input type="text" id="brideName"></div>
+          <div class="field"><label for="groomName">Имя жениха</label><input type="text" id="groomName"></div>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Обращение к гостям</h2>
+        <div class="field"><label for="greetingTitle">Заголовок</label><input type="text" id="greetingTitle"></div>
+        <div class="field"><label for="greetingText">Текст</label><textarea id="greetingText" rows="4"></textarea></div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Дата</h2>
+        <div class="field-row">
+          <div class="field"><label for="weddingDate">Дата</label><input type="text" id="weddingDate"></div>
+          <div class="field"><label for="weddingTime">Время</label><input type="text" id="weddingTime" placeholder="18:00"></div>
+        </div>
+        <div class="field"><label for="dateLabel">Подпись под датой</label><input type="text" id="dateLabel"></div>
+        <div class="field"><label for="countdownLabel">Подпись над таймером</label><input type="text" id="countdownLabel" placeholder="До свадьбы осталось:"></div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Локация</h2>
+        <div class="field"><label for="venueName">Название</label><input type="text" id="venueName"></div>
+        <div class="field"><label for="venueAddress">Адрес</label><textarea id="venueAddress" rows="3"></textarea></div>
+        <div class="field">
+          <label for="venuePhoto">Фото банкетного зала (ссылка)</label>
+          <input type="url" id="venuePhoto" placeholder="https://...">
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="coordinates">Координаты (lat, lng)</label><input type="text" id="coordinates" placeholder="40.2833, 69.6333"></div>
+          <div class="field"><label for="mapLink">Ссылка на карту</label><input type="url" id="mapLink"></div>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-header">
+          <h2>Программа</h2>
+          <button type="button" id="add-program-item" class="btn btn-outline btn-sm">+ Пункт</button>
+        </div>
+        <div id="program-editor" class="program-editor"></div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Пожелания гостям</h2>
+        <div class="field"><label for="notesText">Текст</label><textarea id="notesText" rows="4"></textarea></div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Контакты и финал</h2>
+        <div class="field"><label for="contactsText">Текст контактов</label><textarea id="contactsText" rows="3"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label for="contactName">Имя контакта</label><input type="text" id="contactName"></div>
+          <div class="field"><label for="contactPhone">Телефон</label><input type="tel" id="contactPhone"></div>
+        </div>
+        <div class="field"><label for="inviteText">Финальный текст</label><textarea id="inviteText" rows="3"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label for="inviteLink">Ссылка кнопки</label><input type="url" id="inviteLink"></div>
+          <div class="field"><label for="inviteButtonText">Текст кнопки</label><input type="text" id="inviteButtonText"></div>
+        </div>
+        <div class="field"><label for="footerSign">Подпись внизу</label><input type="text" id="footerSign"></div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-header">
+          <h2>Галерея</h2>
+          <button type="button" id="add-gallery-item" class="btn btn-outline btn-sm">+ Фото</button>
+        </div>
+        <div id="gallery-editor" class="gallery-editor"></div>
+      </section>
+
+      <div class="admin-footer">
+        <button type="button" id="save-btn" class="btn btn-primary btn-lg">Сохранить изменения</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="theme.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

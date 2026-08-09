@@ -1,0 +1,68 @@
+{
+  "marqueeText": "",
+  "splashTitle": "Потому что мы женимся!",
+  "splashSubtitle": "Ничего не планируйте на",
+  "splashHint": "Листайте вниз, чтобы узнать все подробности",
+  "splashButtonText": "Открыть приглашение",
+  "brideName": "Хатиджа",
+  "groomName": "Мухаммадюсуф",
+  "greetingTitle": "Дорогие родные и друзья",
+  "greetingText": "15 августа 2026 состоится наша свадьба. Этот день невозможно представить без самых близких людей, и мы очень хотели бы, чтобы вы провели его вместе с нами!",
+  "weddingDate": "15.08.2026",
+  "weddingTime": "18:00",
+  "dateLabel": "состоится наша свадьба",
+  "countdownLabel": "До свадьбы осталось:",
+  "venueName": "Торжественный Дворец",
+  "venueAddress": "ул. Ленина 123\nХуджанд, Согдийская область",
+  "venuePhoto": "",
+  "mapLink": "https://maps.google.com/?q=40.2833,69.6333",
+  "notesText": "Самое важное для нас — отпраздновать этот день вместе с вами. Если захотите сделать подарок, мы с радостью примем ваш вклад в наш семейный бюджет.",
+  "contactsText": "В день свадьбы по любым вопросам обращайтесь к организатору:",
+  "contactName": "Организатор",
+  "contactPhone": "+992 00 000 00 00",
+  "inviteText": "Будем очень рады видеть вас на нашей свадьбе!",
+  "inviteLink": "https://t.me/",
+  "inviteButtonText": "Написать в Telegram",
+  "footerSign": "С любовью, Мухаммадюсуф & Хатиджа",
+  "coordinates": [
+    40.2833,
+    69.6333
+  ],
+  "program": [
+    {
+      "time": "16:00",
+      "title": "Сбор гостей",
+      "description": "Приветственные напитки"
+    },
+    {
+      "time": "17:00",
+      "title": "Церемония",
+      "description": "Торжественная часть"
+    },
+    {
+      "time": "18:00",
+      "title": "Банкет",
+      "description": "Праздничный ужин и танцы"
+    },
+    {
+      "time": "23:00",
+      "title": "Завершение",
+      "description": "Прощание с гостями"
+    }
+  ],
+  "gallery": [],
+  "theme": {
+    "background": "#f8faf6",
+    "accentSection": "#e8ede4",
+    "accentSectionLight": "#f2f5ef",
+    "accentSectionDeep": "#dce5d6",
+    "primary": "#6b7d62",
+    "accent": "#b8c9ae",
+    "accentBright": "#8fa882",
+    "text": "#2e382c",
+    "textMuted": "#7a8a72",
+    "textStrong": "#2e382c",
+    "textHeading": "#4a5c44",
+    "textOnAccent": "#2e382c"
+  }
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3ebdc">
+  <title>Приглашение на свадьбу</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Marck+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-loading">
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <p class="preloader__text">Загружается</p>
+    <p class="preloader__sub">кое-что интересное</p>
+    <div class="preloader__bar"><div class="preloader__fill"></div></div>
+  </div>
+
+  <!-- Opening cover -->
+  <div class="site-cover" id="siteCover">
+    <div class="starfield" data-starfield></div>
+    <div class="site-cover__inner reveal-group">
+      <p class="site-cover__date reveal-item" id="splash-date"></p>
+      <p class="site-cover__title reveal-item" id="splash-title">Потому что мы женимся!</p>
+      <p class="site-cover__subtitle reveal-item" id="splash-subtitle">Ничего не планируйте на</p>
+      <button type="button" class="site-cover__heart reveal-item" id="openCoverBtn" aria-label="Открыть приглашение">
+        <img src="https://static.tildacdn.com/tild3133-6431-4639-b133-663662323435/__.svg" alt="" width="88" height="88">
+      </button>
+      <p class="site-cover__hint reveal-item" id="splash-hint">Листайте вниз, чтобы узнать все подробности</p>
+    </div>
+  </div>
+
+  <main id="mainContent" class="main-content" inert>
+
+    <!-- Hero -->
+    <section id="hero" class="section section--dark hero">
+      <div class="starfield" data-starfield></div>
+      <div class="hero__inner">
+        <h1 class="hero__couple" id="hero-couple">
+          <span class="hero__name-part" id="hero-groom"></span>
+          <span class="hero__amp">&</span>
+          <span class="hero__name-part" id="hero-bride"></span>
+        </h1>
+      </div>
+      <p class="hero__hint">прокрутите вниз</p>
+    </section>
+
+    <!-- Greeting -->
+    <section id="greeting" class="section section--dark greeting">
+      <div class="starfield" data-starfield></div>
+      <div class="greeting__inner reveal-group">
+        <h2 id="greeting-title" class="greeting__title reveal-item"></h2>
+        <p id="greeting-text" class="greeting__text reveal-item"></p>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--light" aria-hidden="true"></div>
+
+    <!-- Gallery -->
+    <section id="gallery" class="section section--light gallery">
+      <div class="gallery__grid" id="gallery-grid"></div>
+    </section>
+
+    <div class="section-divider section-divider--light" aria-hidden="true"></div>
+
+    <!-- Date -->
+    <section id="date" class="section section--light date-section">
+      <div class="date-section__inner reveal-group">
+        <div class="wedding-calendar reveal-item" id="wedding-calendar" aria-hidden="true"></div>
+        <p id="wedding-date" class="date-section__date reveal-item"></p>
+        <p id="date-label" class="date-section__label reveal-item"></p>
+        <p class="countdown__heading reveal-item" id="countdown-heading">До свадьбы осталось:</p>
+        <div class="countdown reveal-item" id="countdown" aria-live="polite">
+          <div class="countdown__values" id="countdown-values">
+          <div class="countdown__item">
+            <span class="countdown__number" id="cd-days">0</span>
+            <span class="countdown__label">дней</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__number" id="cd-hours">0</span>
+            <span class="countdown__label">часов</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__number" id="cd-minutes">0</span>
+            <span class="countdown__label">минут</span>
+          </div>
+          <div class="countdown__item">
+            <span class="countdown__number" id="cd-seconds">0</span>
+            <span class="countdown__label">секунд</span>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--dark" aria-hidden="true"></div>
+
+    <!-- Location -->
+    <section id="location" class="section section--dark location">
+      <div class="starfield" data-starfield></div>
+      <div class="location__inner reveal-group">
+        <p class="location__label reveal-item">Локация</p>
+        <h2 id="venue-name" class="location__name reveal-item"></h2>
+        <p id="venue-address" class="location__address reveal-item"></p>
+        <figure class="venue-photo reveal-item" id="venue-photo" hidden>
+          <img id="venue-photo-img" src="" alt="">
+        </figure>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--light" aria-hidden="true"></div>
+
+    <!-- Program -->
+    <section id="program" class="section section--light program">
+      <div class="program__inner reveal-group">
+        <p class="program__eyebrow reveal-item">Wedding day</p>
+        <h2 class="program__title reveal-item">Программа</h2>
+        <div class="program__list reveal-item" id="program-list"></div>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--light" aria-hidden="true"></div>
+
+    <!-- Notes -->
+    <section id="notes" class="section section--light notes">
+      <div class="notes__inner reveal-group">
+        <h2 class="notes__title reveal-item">Пожелания</h2>
+        <p id="notes-text" class="notes__text reveal-item"></p>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--dark" aria-hidden="true"></div>
+
+    <!-- Contacts -->
+    <section id="contacts" class="section section--dark contacts">
+      <div class="starfield" data-starfield></div>
+      <div class="contacts__inner reveal-group">
+        <h2 class="contacts__title reveal-item">Контакты</h2>
+        <p id="contacts-text" class="contacts__text reveal-item"></p>
+        <a id="contacts-phone" class="contacts__phone reveal-item" href="#"></a>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--light" aria-hidden="true"></div>
+
+    <!-- Final invite -->
+    <section id="invite" class="section section--light invite">
+      <div class="invite__inner reveal-group">
+        <p id="invite-text" class="invite__text reveal-item"></p>
+        <a id="invite-cta" class="invite__cta reveal-item" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <p id="footer-sign" class="invite__footer reveal-item"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="theme.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
