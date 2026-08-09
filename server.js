@@ -7,7 +7,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.COOKIE_SECURE === 'true') {
   app.set('trust proxy', 1);
 }
 const DATA_DIR = path.join(__dirname, 'data');

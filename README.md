@@ -1,42 +1,41 @@
 # Сайт-приглашение на свадьбу
 
-## Два способа публикации
+## Публикация на своём сервере (рекомендуется)
 
-| | GitHub Pages | Render (нужен для админки) |
-|---|---|---|
-| Сайт для гостей | ✅ [virgin063.github.io/weddingmk](https://virgin063.github.io/weddingmk) | ✅ |
-| Админ-панель `/admin` | ❌ не работает | ✅ работает |
-| Пароль админки | — | `260626MK` |
+Полная инструкция: **[DEPLOY_VPS.md](DEPLOY_VPS.md)**
 
-**GitHub Pages** — только статика (HTML/CSS). Вход в админку там **никогда не заработает**, это ограничение GitHub, не баг.
+Кратко:
 
-## Админка онлайн (Render, 5 минут)
+1. Арендуете VPS (Ubuntu) + домен
+2. Подключаетесь по SSH
+3. Клонируете репозиторий и запускаете
 
-1. [render.com](https://render.com) → войти через GitHub
-2. **New** → **Blueprint**
-3. Репозиторий `Virgin063/weddingmk` → **Apply**
-4. Дождаться деплоя → открыть ссылку вида `https://weddingmk-xxxx.onrender.com/admin`
-5. Пароль: **260626MK**
+```bash
+git clone https://github.com/Virgin063/weddingmk.git /var/www/weddingmk
+cd /var/www/weddingmk
+npm install --production
+npm install -g pm2
+pm2 start deploy/ecosystem.config.cjs
+pm2 save && pm2 startup
+```
 
-Изменения в админке на Render сохраняются на сервере. Чтобы они появились на GitHub Pages — скопируйте `data/config.json` и сделайте `git push`.
+4. Настраиваете Nginx + SSL (см. DEPLOY_VPS.md)
 
-## Локально
+| | |
+|---|---|
+| Сайт | `https://ваш-домен.ru` |
+| Админка | `https://ваш-домен.ru/admin` |
+| Пароль | `260626MK` |
+
+## Локально на Mac
 
 ```bash
 npm install
 npm start
 ```
 
-Сайт: http://localhost:8080 · Админ: http://localhost:8080/admin
+http://localhost:8080 · админ: http://localhost:8080/admin
 
-## Обновление GitHub Pages
+## GitHub Pages
 
-После правок в `data/config.json`:
-
-```bash
-git add data/config.json
-git commit -m "Обновить контент"
-git push
-```
-
-Сайт на GitHub Pages обновится через 1–2 минуты.
+[virgin063.github.io/weddingmk](https://virgin063.github.io/weddingmk) — только просмотр сайта. **Админка там не работает** (нет сервера).
