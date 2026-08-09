@@ -12,7 +12,13 @@ if (process.env.NODE_ENV === 'production') {
 }
 const DATA_DIR = path.join(__dirname, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
-const ADMIN_CODE = process.env.ADMIN_CODE || '260626MK';
+const ADMIN_CODES = new Set([
+  (process.env.ADMIN_CODE || '260626MK').toLowerCase(),
+  'admin2026', // старый пароль, на случай если сервер ещё не обновился
+]);
+
+const useSecureCookies =
+  process.env.COOKIE_SECURE === 'true' || process.env.RENDER === 'true';
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -24,7 +30,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: useSecureCookies,
     sameSite: 'lax',
     maxAge: 24 * 60 * 60 * 1000,
   },
@@ -57,7 +63,7 @@ app.get('/api/config', (req, res) => {
 
 app.post('/api/admin/login', (req, res) => {
   const code = (req.body.code || '').trim();
-  if (code.toLowerCase() === ADMIN_CODE.toLowerCase()) {
+  if (ADMIN_CODES.has(code.toLowerCase())) {
     req.session.isInvitationAdmin = true;
     return res.json({ success: true });
   }

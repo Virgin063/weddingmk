@@ -288,7 +288,16 @@ loginForm.addEventListener('submit', async (e) => {
     });
 
     if (!res.ok) {
-      loginError.textContent = 'Неверный код. Проверьте пароль и попробуйте снова';
+      let message = 'Неверный код. Проверьте пароль и попробуйте снова';
+      try {
+        const data = await res.json();
+        if (data.message) message = data.message;
+      } catch {
+        if (res.status === 404) {
+          message = 'Админка не работает без Node.js-сервера. Подключите Render или запустите npm start';
+        }
+      }
+      loginError.textContent = message;
       loginError.hidden = false;
       return;
     }
