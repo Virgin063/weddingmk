@@ -6,3 +6,10 @@ services:
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_CODE
+        value: 260626MK
+      - key: SESSION_SECRET
+        value: weddingmk-session-virgin063-2026

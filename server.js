@@ -57,7 +57,7 @@ app.get('/api/config', (req, res) => {
 
 app.post('/api/admin/login', (req, res) => {
   const code = (req.body.code || '').trim();
-  if (code === ADMIN_CODE) {
+  if (code.toLowerCase() === ADMIN_CODE.toLowerCase()) {
     req.session.isInvitationAdmin = true;
     return res.json({ success: true });
   }

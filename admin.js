@@ -288,7 +288,7 @@ loginForm.addEventListener('submit', async (e) => {
     });
 
     if (!res.ok) {
-      loginError.textContent = 'Неверный код. Используйте ADMIN2026';
+      loginError.textContent = 'Неверный код. Проверьте пароль и попробуйте снова';
       loginError.hidden = false;
       return;
     }
