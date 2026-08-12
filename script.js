@@ -453,6 +453,7 @@ function initStarfields() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  fetch('/api/invitation/view', { method: 'POST' }).catch(() => {});
   await loadConfig();
   populateContent();
   initPreloader(() => initCover());

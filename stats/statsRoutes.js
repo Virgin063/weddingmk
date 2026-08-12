@@ -7,6 +7,7 @@ function createStatsRoutes(app, config) {
     statsDir,
     getCombinedStats,
     onClearHatidjaViews,
+    onClearInvitationViews,
     onSyncWeddingData,
     syncSecret = process.env.STATS_SYNC_SECRET || process.env.ADMIN_CODE || '260626MK',
   } = config;
@@ -78,6 +79,13 @@ function createStatsRoutes(app, config) {
       },
     });
   });
+
+  if (onClearInvitationViews) {
+    app.delete('/api/stats/invitation-views', isStatsViewer, (req, res) => {
+      onClearInvitationViews();
+      res.json({ success: true });
+    });
+  }
 
   if (onClearHatidjaViews) {
     app.delete('/api/stats/hatidja-views', isStatsViewer, (req, res) => {

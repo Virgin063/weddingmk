@@ -58,21 +58,22 @@ function isAdmin(req, res, next) {
 }
 
 /* ============================================
-   Статистика просмотров открытки /hatidja
+   Статистика просмотров: / и /hatidja
    ============================================ */
+const INVITATION_VIEWS_FILE = path.join(DATA_DIR, 'invitation-views.json');
 const HATIDJA_VIEWS_FILE = path.join(DATA_DIR, 'hatidja-views.json');
 
-function loadHatidjaViews() {
+function loadViews(filePath) {
   try {
-    const data = JSON.parse(fs.readFileSync(HATIDJA_VIEWS_FILE, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     return Array.isArray(data.views) ? data : { views: [] };
   } catch {
     return { views: [] };
   }
 }
 
-function saveHatidjaViews(data) {
-  fs.writeFileSync(HATIDJA_VIEWS_FILE, JSON.stringify(data, null, 2), 'utf8');
+function saveViews(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
 function getClientIp(req) {
@@ -90,8 +91,18 @@ function normalizeIp(ip) {
   return ip;
 }
 
-function buildHatidjaCardStats() {
-  const data = loadHatidjaViews();
+function recordView(req, filePath) {
+  const data = loadViews(filePath);
+  data.views.push({
+    ip: normalizeIp(getClientIp(req)),
+    userAgent: req.headers['user-agent'] || '',
+    at: new Date().toISOString(),
+  });
+  saveViews(filePath, data);
+}
+
+function buildViewStats(filePath) {
+  const data = loadViews(filePath);
   const byIpMap = {};
 
   for (const view of data.views) {
@@ -114,26 +125,27 @@ function buildHatidjaCardStats() {
   );
 
   return {
-    hatidjaCard: {
-      totalViews: data.views.length,
-      uniqueIps: byIp.length,
-      byIp,
-      recent: [...data.views].reverse().slice(0, 100),
-    },
+    totalViews: data.views.length,
+    uniqueIps: byIp.length,
+    byIp,
+    recent: [...data.views].reverse().slice(0, 100),
   };
 }
 
+function buildInvitationSiteStats() {
+  return {
+    main: buildViewStats(INVITATION_VIEWS_FILE),
+    hatidjaCard: buildViewStats(HATIDJA_VIEWS_FILE),
+  };
+}
+
+app.post('/api/invitation/view', (req, res) => {
+  recordView(req, INVITATION_VIEWS_FILE);
+  res.json({ success: true });
+});
+
 app.post('/api/hatidja/view', (req, res) => {
-  const data = loadHatidjaViews();
-  const ip = normalizeIp(getClientIp(req));
-
-  data.views.push({
-    ip,
-    userAgent: req.headers['user-agent'] || '',
-    at: new Date().toISOString(),
-  });
-
-  saveHatidjaViews(data);
+  recordView(req, HATIDJA_VIEWS_FILE);
   res.json({ success: true });
 });
 
@@ -166,7 +178,7 @@ createStatsRoutes(app, {
   getCombinedStats: (req) => {
     const hatidjaStats = buildWeddingSiteStats(weddingDataCache, req);
     return {
-      invitation: buildHatidjaCardStats(),
+      invitation: buildInvitationSiteStats(),
       hatidjaSite: {
         hasData: weddingDataCache.guests?.length > 0
           || weddingDataCache.rsvps?.length > 0
@@ -180,7 +192,8 @@ createStatsRoutes(app, {
       },
     };
   },
-  onClearHatidjaViews: () => saveHatidjaViews({ views: [] }),
+  onClearInvitationViews: () => saveViews(INVITATION_VIEWS_FILE, { views: [] }),
+  onClearHatidjaViews: () => saveViews(HATIDJA_VIEWS_FILE, { views: [] }),
   onSyncWeddingData: syncWeddingData,
 });
 

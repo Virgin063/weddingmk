@@ -62,22 +62,9 @@ function renderTable(headers, rows, emptyText) {
     </div>`;
 }
 
-function renderInvitationSection(site) {
-  if (!site.available) {
-    return `
-      <section class="site-block">
-        <div class="site-block__head">
-          <div>
-            <h2 class="site-block__title">Сайт приглашения</h2>
-            <p class="site-block__desc">193.233.91.241 · приглашение и открытка /hatidja</p>
-          </div>
-        </div>
-        <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
-      </section>`;
-  }
-
-  const card = site.hatidjaCard || {};
-  const ipRows = (card.byIp || []).map((row) => `
+function renderViewBlock(title, linkLabel, linkHref, stats) {
+  const block = stats || {};
+  const ipRows = (block.byIp || []).map((row) => `
     <tr>
       <td>${escapeHtml(row.ip)}</td>
       <td>${row.count}</td>
@@ -85,7 +72,7 @@ function renderInvitationSection(site) {
       <td class="muted">${formatRuDate(row.lastSeen)}</td>
     </tr>`);
 
-  const recentRows = (card.recent || []).map((row) => `
+  const recentRows = (block.recent || []).map((row) => `
     <tr>
       <td class="muted">${formatRuDate(row.at)}</td>
       <td>${escapeHtml(row.ip)}</td>
@@ -93,32 +80,51 @@ function renderInvitationSection(site) {
     </tr>`);
 
   return `
+    <div class="card">
+      <h3 class="card-title">${title}${linkHref ? ` · <a href="${linkHref}" target="_blank" rel="noopener">${linkLabel}</a>` : ''}</h3>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value">${block.totalViews ?? 0}</div><div class="stat-label">Просмотров</div></div>
+        <div class="stat-card"><div class="stat-value">${block.uniqueIps ?? 0}</div><div class="stat-label">Уникальных IP</div></div>
+      </div>
+      <h4 class="card-subtitle">По IP (${(block.byIp || []).length})</h4>
+      ${renderTable(['IP', 'Просмотров', 'Первый визит', 'Последний'], ipRows, 'Пока нет просмотров')}
+      <h4 class="card-subtitle">Последние визиты</h4>
+      ${renderTable(['Дата', 'IP', 'Устройство'], recentRows, 'Пока нет просмотров')}
+    </div>`;
+}
+
+function renderInvitationSection(site) {
+  if (!site.available) {
+    return `
+      <section class="site-block">
+        <div class="site-block__head">
+          <div>
+            <h2 class="site-block__title">Сайт приглашения</h2>
+            <p class="site-block__desc">http://193.233.91.241 · главная страница и открытка</p>
+          </div>
+        </div>
+        <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
+      </section>`;
+  }
+
+  const main = site.main || {};
+  const card = site.hatidjaCard || {};
+
+  return `
     <section class="site-block">
       <div class="site-block__head">
         <div>
           <h2 class="site-block__title">Сайт приглашения</h2>
-          <p class="site-block__desc">Приглашение и открытка <a href="/" target="_blank" rel="noopener">/</a> · <a href="/hatidja/" target="_blank" rel="noopener">/hatidja</a></p>
+          <p class="site-block__desc">http://193.233.91.241 — просмотры главной страницы и открытки</p>
         </div>
-        <button type="button" class="btn btn-danger" id="clear-hatidja-views">Очистить просмотры открытки</button>
-      </div>
-
-      <div class="card">
-        <h3 class="card-title">Открытка /hatidja</h3>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-value">${card.totalViews ?? 0}</div><div class="stat-label">Просмотров</div></div>
-          <div class="stat-card"><div class="stat-value">${card.uniqueIps ?? 0}</div><div class="stat-label">Уникальных IP</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-danger btn-sm" id="clear-invitation-views">Очистить просмотры /</button>
+          <button type="button" class="btn btn-danger btn-sm" id="clear-hatidja-views">Очистить /hatidja</button>
         </div>
       </div>
 
-      <div class="card">
-        <h3 class="card-title">По IP (${(card.byIp || []).length})</h3>
-        ${renderTable(['IP', 'Просмотров', 'Первый визит', 'Последний'], ipRows, 'Пока нет просмотров')}
-      </div>
-
-      <div class="card">
-        <h3 class="card-title">Последние визиты</h3>
-        ${renderTable(['Дата', 'IP', 'Устройство'], recentRows, 'Пока нет просмотров')}
-      </div>
+      ${renderViewBlock('Приглашение', 'открыть', '/', main)}
+      ${renderViewBlock('Открытка', '/hatidja', '/hatidja/', card)}
     </section>`;
 }
 
@@ -129,7 +135,7 @@ function renderHatidjaSiteSection(site) {
         <div class="site-block__head">
           <div>
             <h2 class="site-block__title">Сайт Хатиджи</h2>
-            <p class="site-block__desc">RSVP, квест, пожелания, музыка, галерея, бинго · данные с локального сайта</p>
+            <p class="site-block__desc">RSVP, квест, бинго — отдельный локальный сайт, данные приходят на сервер автоматически</p>
           </div>
         </div>
         <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
@@ -258,6 +264,12 @@ function renderAll(data) {
   fetchedAtEl.textContent = data.fetchedAt
     ? `Обновлено: ${formatRuDate(data.fetchedAt)}`
     : '';
+
+  document.getElementById('clear-invitation-views')?.addEventListener('click', async () => {
+    if (!confirm('Удалить статистику просмотров главной страницы?')) return;
+    const res = await apiFetch('/api/stats/invitation-views', { method: 'DELETE' });
+    if (res.ok) await loadAll();
+  });
 
   document.getElementById('clear-hatidja-views')?.addEventListener('click', async () => {
     if (!confirm('Удалить всю статистику просмотров открытки?')) return;
