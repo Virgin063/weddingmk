@@ -31,6 +31,8 @@ function showStaticHostWarning() {
   document.getElementById('admin-code').disabled = true;
 }
 
+let config = {};
+
 const FIELD_IDS = [
   'marqueeText', 'splashTitle', 'splashSubtitle', 'splashHint', 'splashButtonText',
   'brideName', 'groomName',

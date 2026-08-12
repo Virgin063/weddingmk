@@ -92,6 +92,16 @@ body.site-open .site-cover {
 
 /* ---- Preloader ---- */
 
+/* Тёмные блоки: контрастный текст на бордо и других тёмных темах */
+.preloader,
+.site-cover,
+.section--dark {
+  --text-on-light: var(--text-on-accent);
+  --text-strong: var(--text-on-accent);
+  --text-heading: var(--text-on-accent);
+  --text-muted-light: var(--text-muted-dark);
+}
+
 .preloader {
   position: fixed;
   inset: 0;

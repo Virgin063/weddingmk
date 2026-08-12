@@ -102,9 +102,7 @@ function autoTextOnAccent(accentSection, textStrong) {
 
 function applyTheme(theme) {
   const t = mergeTheme(theme);
-  if (!t.textOnAccent) {
-    t.textOnAccent = autoTextOnAccent(t.accentSection, t.textStrong);
-  }
+  t.textOnAccent = autoTextOnAccent(t.accentSection, t.textStrong);
 
   const root = document.documentElement;
   root.style.setProperty('--bordo-dark', t.accentSection);
