@@ -18,7 +18,7 @@ const ADMIN_CODES = new Set([
 ]);
 
 const useSecureCookies =
-  process.env.COOKIE_SECURE === 'true' || process.env.RENDER === 'true';
+  process.env.COOKIE_SECURE === 'true' ? 'auto' : false;
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -192,7 +192,10 @@ app.post('/api/admin/login', (req, res) => {
   const code = (req.body.code || '').trim();
   if (ADMIN_CODES.has(code.toLowerCase())) {
     req.session.isInvitationAdmin = true;
-    return res.json({ success: true });
+    return req.session.save((err) => {
+      if (err) return res.status(500).json({ success: false, message: 'Ошибка сессии' });
+      res.json({ success: true });
+    });
   }
   res.status(403).json({ success: false, message: 'Неверный код' });
 });

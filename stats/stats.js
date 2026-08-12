@@ -250,7 +250,7 @@ function renderHatidjaSiteSection(site) {
 }
 
 function renderAll(data) {
-  const { sites } = data;
+  const sites = data?.sites || {};
   statsContent.innerHTML =
     renderInvitationSection(sites.invitation || { available: false }) +
     renderHatidjaSiteSection(sites.hatidjaSite || { available: false });
@@ -267,24 +267,31 @@ function renderAll(data) {
 }
 
 function showLogin() {
-  loginScreen.hidden = false;
-  statsApp.hidden = true;
+  loginScreen.style.display = 'flex';
+  statsApp.style.display = 'none';
 }
 
 function showStats() {
-  loginScreen.hidden = true;
-  statsApp.hidden = false;
+  loginScreen.style.display = 'none';
+  statsApp.style.display = 'block';
 }
 
 async function loadAll() {
   statsContent.innerHTML = '<p class="loading-msg">Загрузка…</p>';
   try {
     const res = await apiFetch('/api/stats/all');
-    if (!res.ok) throw new Error('forbidden');
-    renderAll(await res.json());
-  } catch {
+    if (res.status === 403) {
+      showLogin();
+      loginError.textContent = 'Нужно войти. Пароль: 260626MK';
+      loginError.hidden = false;
+      return;
+    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    renderAll(data);
+  } catch (error) {
     showLogin();
-    loginError.textContent = 'Сессия истекла — войдите снова';
+    loginError.textContent = 'Ошибка загрузки: ' + (error.message || 'проверьте соединение');
     loginError.hidden = false;
   }
 }
@@ -293,20 +300,33 @@ loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   loginError.hidden = true;
 
-  const code = document.getElementById('stats-code').value;
-  const res = await apiFetch('/api/stats/login', {
-    method: 'POST',
-    body: JSON.stringify({ code }),
-  });
-
-  if (res.ok) {
-    showStats();
-    await loadAll();
+  const code = document.getElementById('stats-code').value.trim();
+  if (!code) {
+    loginError.textContent = 'Введите код доступа';
+    loginError.hidden = false;
     return;
   }
 
-  loginError.textContent = 'Неверный код';
-  loginError.hidden = false;
+  try {
+    const res = await apiFetch('/api/stats/login', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.success) {
+      showStats();
+      await loadAll();
+      return;
+    }
+
+    loginError.textContent = data.message || 'Неверный код (пароль: 260626MK)';
+    loginError.hidden = false;
+  } catch {
+    loginError.textContent = 'Нет связи с сервером';
+    loginError.hidden = false;
+  }
 });
 
 document.getElementById('logout-btn').addEventListener('click', async () => {
