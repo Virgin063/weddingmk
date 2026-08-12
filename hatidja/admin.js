@@ -8,6 +8,17 @@ const logoutBtn = document.getElementById('logout-btn');
 const refreshBtn = document.getElementById('refresh-btn');
 const clearBtn = document.getElementById('clear-btn');
 
+async function apiFetch(url, options = {}) {
+  return fetch(url, {
+    credentials: 'include',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+  });
+}
+
 function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('ru-RU', {
@@ -30,12 +41,20 @@ function showAdmin() {
 }
 
 async function checkSession() {
-  const res = await fetch('/api/admin/session');
-  const data = await res.json();
-  if (data.authenticated) {
-    showAdmin();
-    await loadStats();
-  } else {
+  try {
+    const res = await apiFetch('/api/admin/session');
+    if (!res.ok) {
+      showLogin();
+      return;
+    }
+    const data = await res.json();
+    if (data.authenticated) {
+      showAdmin();
+      await loadStats();
+    } else {
+      showLogin();
+    }
+  } catch {
     showLogin();
   }
 }
@@ -45,9 +64,8 @@ loginForm.addEventListener('submit', async (e) => {
   loginError.hidden = true;
 
   const code = document.getElementById('admin-code').value;
-  const res = await fetch('/api/admin/login', {
+  const res = await apiFetch('/api/admin/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
   });
 
@@ -62,7 +80,7 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 logoutBtn.addEventListener('click', async () => {
-  await fetch('/api/admin/logout', { method: 'POST' });
+  await apiFetch('/api/admin/logout', { method: 'POST' });
   showLogin();
   document.getElementById('admin-code').value = '';
 });
@@ -72,15 +90,17 @@ refreshBtn.addEventListener('click', loadStats);
 clearBtn.addEventListener('click', async () => {
   if (!confirm('Удалить всю статистику просмотров?')) return;
 
-  const res = await fetch('/api/admin/hatidja/stats', { method: 'DELETE' });
+  const res = await apiFetch('/api/admin/hatidja/stats', { method: 'DELETE' });
   if (res.ok) {
     await loadStats();
   }
 });
 
 async function loadStats() {
-  const res = await fetch('/api/admin/hatidja/stats');
+  const res = await apiFetch('/api/admin/hatidja/stats');
   if (!res.ok) {
+    loginError.textContent = 'Не удалось загрузить статистику. Войдите снова.';
+    loginError.hidden = false;
     showLogin();
     return;
   }

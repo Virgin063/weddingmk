@@ -29,7 +29,8 @@
       <div class="admin-header__inner">
         <h1>Приглашение · админ</h1>
         <div class="admin-header__actions">
-          <a href="/" class="btn btn-outline" target="_blank">Открыть сайт</a>
+          <a href="/hatidja/" class="btn btn-outline" target="_blank">Открытка</a>
+          <a href="/" class="btn btn-outline" target="_blank">Приглашение</a>
           <button type="button" id="logout-btn" class="btn btn-outline">Выйти</button>
         </div>
       </div>
@@ -38,6 +39,12 @@
     <main class="admin-main">
       <div id="save-status" class="save-status" hidden></div>
 
+      <nav class="admin-tabs">
+        <button type="button" class="admin-tab active" data-tab="content" id="tab-btn-content">Контент</button>
+        <button type="button" class="admin-tab" data-tab="stats" id="tab-btn-stats">📊 Статистика</button>
+      </nav>
+
+      <div id="panel-content" class="admin-panel">
       <section class="admin-section">
         <h2>Дизайн и цвета</h2>
         <p class="section-hint">Готовые палитры или свои цвета. Не забудьте нажать «Сохранить».</p>
@@ -135,6 +142,43 @@
 
       <div class="admin-footer">
         <button type="button" id="save-btn" class="btn btn-primary btn-lg">Сохранить изменения</button>
+      </div>
+      </div>
+
+      <div id="panel-stats" class="admin-panel" hidden>
+        <section class="admin-section">
+          <div class="section-header">
+            <h2>Статистика просмотров</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" id="stats-refresh-btn" class="btn btn-outline btn-sm">Обновить</button>
+              <button type="button" id="stats-clear-btn" class="btn btn-danger btn-sm">Очистить</button>
+            </div>
+          </div>
+          <p class="section-hint">Просмотры открытки <a href="/hatidja/" target="_blank">/hatidja</a> — кто и когда открывал страницу.</p>
+          <div class="stats-cards">
+            <div class="stats-card"><span class="stats-card__label">Всего просмотров</span><span class="stats-card__value" id="stats-total">—</span></div>
+            <div class="stats-card"><span class="stats-card__label">Уникальных IP</span><span class="stats-card__value" id="stats-unique">—</span></div>
+          </div>
+          <p class="stats-updated" id="stats-updated"></p>
+        </section>
+        <section class="admin-section">
+          <h2>По IP-адресам</h2>
+          <div class="stats-table-wrap">
+            <table class="stats-table">
+              <thead><tr><th>IP</th><th>Просмотров</th><th>Первый визит</th><th>Последний</th></tr></thead>
+              <tbody id="stats-ip-body"><tr><td colspan="4" class="stats-empty">Загрузка…</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="admin-section">
+          <h2>Последние визиты</h2>
+          <div class="stats-table-wrap">
+            <table class="stats-table">
+              <thead><tr><th>Дата</th><th>IP</th><th>Устройство</th></tr></thead>
+              <tbody id="stats-recent-body"><tr><td colspan="3" class="stats-empty">Загрузка…</td></tr></tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </main>
   </div>
