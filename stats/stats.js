@@ -42,14 +42,11 @@ function attendingRu(v) {
   return escapeHtml(v || '—');
 }
 
-function peerErrorText(code) {
-  const map = {
-    peer_not_configured: 'Второй сайт не настроен (STATS_PEER_URL). Показаны только локальные данные.',
-    peer_fetch_failed: 'Не удалось связаться со вторым сайтом.',
-  };
-  if (map[code]) return map[code];
-  if (String(code).startsWith('peer_http_')) return `Второй сайт ответил ошибкой (${String(code).replace('peer_http_', 'HTTP ')})`;
-  return escapeHtml(code || 'Данные второго сайта недоступны');
+function peerErrorText(code, message) {
+  if (code === 'no_data') {
+    return message || 'Данные сайта Хатиджи ещё не получены. Запустите локальный сайт — он отправит их на сервер автоматически.';
+  }
+  return escapeHtml(message || 'Данные временно недоступны');
 }
 
 function renderTable(headers, rows, emptyText) {
@@ -75,7 +72,7 @@ function renderInvitationSection(site) {
             <p class="site-block__desc">193.233.91.241 · приглашение и открытка /hatidja</p>
           </div>
         </div>
-        <div class="unavailable">${peerErrorText(site.error)}</div>
+        <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
       </section>`;
   }
 
@@ -132,10 +129,10 @@ function renderHatidjaSiteSection(site) {
         <div class="site-block__head">
           <div>
             <h2 class="site-block__title">Сайт Хатиджи</h2>
-            <p class="site-block__desc">Цитаты, RSVP, квест, бинго · localhost:3000</p>
+            <p class="site-block__desc">RSVP, квест, пожелания, музыка, галерея, бинго · данные с локального сайта</p>
           </div>
         </div>
-        <div class="unavailable">${peerErrorText(site.error)}</div>
+        <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
       </section>`;
   }
 

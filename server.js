@@ -138,12 +138,50 @@ app.post('/api/hatidja/view', (req, res) => {
 });
 
 const { createStatsRoutes } = require('./stats/statsRoutes');
+const {
+  loadWeddingDataFile,
+  saveWeddingDataFile,
+  buildWeddingSiteStats,
+} = require('./stats/weddingStats');
+
+let weddingDataCache = loadWeddingDataFile(DATA_DIR);
+
+function syncWeddingData(payload) {
+  weddingDataCache = {
+    rsvps: payload.rsvps || [],
+    guests: payload.guests || [],
+    quizResults: payload.quizResults || [],
+    wishes: payload.wishes || [],
+    musicRequests: payload.musicRequests || [],
+    gallery: payload.gallery || [],
+    bingoCards: payload.bingoCards || [],
+    lastUpdated: payload.lastUpdated || new Date().toISOString(),
+  };
+  saveWeddingDataFile(DATA_DIR, weddingDataCache);
+}
+
 createStatsRoutes(app, {
-  siteId: 'invitation',
   adminCodes: ADMIN_CODES,
   statsDir: path.join(__dirname, 'stats'),
-  getLocalPayload: () => buildHatidjaCardStats(),
+  getCombinedStats: (req) => {
+    const hatidjaStats = buildWeddingSiteStats(weddingDataCache, req);
+    return {
+      invitation: buildHatidjaCardStats(),
+      hatidjaSite: {
+        hasData: weddingDataCache.guests?.length > 0
+          || weddingDataCache.rsvps?.length > 0
+          || weddingDataCache.quizResults?.length > 0
+          || weddingDataCache.wishes?.length > 0
+          || weddingDataCache.musicRequests?.length > 0
+          || weddingDataCache.gallery?.length > 0
+          || weddingDataCache.bingoCards?.length > 0
+          || Boolean(weddingDataCache.lastUpdated),
+        ...hatidjaStats,
+      },
+    };
+  },
   onClearHatidjaViews: () => saveHatidjaViews({ views: [] }),
+  onSyncWeddingData: syncWeddingData,
 });
 
 app.get('/api/config', (req, res) => {
