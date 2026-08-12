@@ -99,31 +99,39 @@ function renderInvitationSection(site) {
       <section class="site-block">
         <div class="site-block__head">
           <div>
-            <h2 class="site-block__title">Сайт приглашения</h2>
-            <p class="site-block__desc">http://193.233.91.241 · главная страница и открытка</p>
+            <h2 class="site-block__title">Приглашение · Мухаммадюсуф &amp; Хатиджа</h2>
+            <p class="site-block__desc"><a href="http://193.233.91.241/" target="_blank" rel="noopener">http://193.233.91.241</a></p>
           </div>
         </div>
         <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
       </section>`;
   }
 
-  const main = site.main || {};
+  const main = site.main;
   const card = site.hatidjaCard || {};
+  const needsUpdate = main === undefined;
+  const mainStats = main || { totalViews: 0, uniqueIps: 0, byIp: [], recent: [] };
 
   return `
     <section class="site-block">
       <div class="site-block__head">
         <div>
-          <h2 class="site-block__title">Сайт приглашения</h2>
-          <p class="site-block__desc">http://193.233.91.241 — просмотры главной страницы и открытки</p>
+          <h2 class="site-block__title">Приглашение · Мухаммадюсуф &amp; Хатиджа</h2>
+          <p class="site-block__desc">Сайт на <a href="http://193.233.91.241/" target="_blank" rel="noopener">http://193.233.91.241</a> — кто открывал приглашение</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button type="button" class="btn btn-danger btn-sm" id="clear-invitation-views">Очистить просмотры /</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="window.open('http://193.233.91.241/','_blank')">Открыть сайт</button>
+          ${!needsUpdate ? '<button type="button" class="btn btn-danger btn-sm" id="clear-invitation-views">Очистить /</button>' : ''}
           <button type="button" class="btn btn-danger btn-sm" id="clear-hatidja-views">Очистить /hatidja</button>
         </div>
       </div>
 
-      ${renderViewBlock('Приглашение', 'открыть', '/', main)}
+      ${needsUpdate ? `
+        <div class="unavailable" style="margin-bottom:16px">
+          Статистика главной страницы ещё не активна на сервере. Выполните на VPS: <code>git pull && pm2 restart weddingmk</code>
+        </div>` : ''}
+
+      ${renderViewBlock('Главная страница', '193.233.91.241', 'http://193.233.91.241/', mainStats)}
       ${renderViewBlock('Открытка', '/hatidja', '/hatidja/', card)}
     </section>`;
 }
@@ -134,8 +142,8 @@ function renderHatidjaSiteSection(site) {
       <section class="site-block">
         <div class="site-block__head">
           <div>
-            <h2 class="site-block__title">Сайт Хатиджи</h2>
-            <p class="site-block__desc">RSVP, квест, бинго — отдельный локальный сайт, данные приходят на сервер автоматически</p>
+            <h2 class="site-block__title">Другой сайт · RSVP и квест</h2>
+            <p class="site-block__desc">Локальный сайт (порт 3000), не это приглашение</p>
           </div>
         </div>
         <div class="unavailable">${peerErrorText(site.error, site.message)}</div>
