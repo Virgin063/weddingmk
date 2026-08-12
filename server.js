@@ -90,21 +90,7 @@ function normalizeIp(ip) {
   return ip;
 }
 
-app.post('/api/hatidja/view', (req, res) => {
-  const data = loadHatidjaViews();
-  const ip = normalizeIp(getClientIp(req));
-
-  data.views.push({
-    ip,
-    userAgent: req.headers['user-agent'] || '',
-    at: new Date().toISOString(),
-  });
-
-  saveHatidjaViews(data);
-  res.json({ success: true });
-});
-
-app.get('/api/admin/hatidja/stats', isAdmin, (req, res) => {
+function buildHatidjaCardStats() {
   const data = loadHatidjaViews();
   const byIpMap = {};
 
@@ -127,21 +113,37 @@ app.get('/api/admin/hatidja/stats', isAdmin, (req, res) => {
     (a, b) => new Date(b.lastSeen) - new Date(a.lastSeen)
   );
 
-  res.json({
-    totalViews: data.views.length,
-    uniqueIps: byIp.length,
-    byIp,
-    recent: [...data.views].reverse().slice(0, 100),
-  });
-});
+  return {
+    hatidjaCard: {
+      totalViews: data.views.length,
+      uniqueIps: byIp.length,
+      byIp,
+      recent: [...data.views].reverse().slice(0, 100),
+    },
+  };
+}
 
-app.delete('/api/admin/hatidja/stats', isAdmin, (req, res) => {
-  saveHatidjaViews({ views: [] });
+app.post('/api/hatidja/view', (req, res) => {
+  const data = loadHatidjaViews();
+  const ip = normalizeIp(getClientIp(req));
+
+  data.views.push({
+    ip,
+    userAgent: req.headers['user-agent'] || '',
+    at: new Date().toISOString(),
+  });
+
+  saveHatidjaViews(data);
   res.json({ success: true });
 });
 
-app.get('/hatidja/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'hatidja', 'admin.html'));
+const { createStatsRoutes } = require('./stats/statsRoutes');
+createStatsRoutes(app, {
+  siteId: 'invitation',
+  adminCodes: ADMIN_CODES,
+  statsDir: path.join(__dirname, 'stats'),
+  getLocalPayload: () => buildHatidjaCardStats(),
+  onClearHatidjaViews: () => saveHatidjaViews({ views: [] }),
 });
 
 app.get('/api/config', (req, res) => {
@@ -185,6 +187,6 @@ app.use(express.static(__dirname));
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Invitation site: http://localhost:${PORT}`);
   console.log(`Admin panel: http://localhost:${PORT}/admin`);
+  console.log(`Stats panel: http://localhost:${PORT}/stats`);
   console.log(`Hatidja card: http://localhost:${PORT}/hatidja`);
-  console.log(`Hatidja admin: http://localhost:${PORT}/hatidja/admin`);
 });
