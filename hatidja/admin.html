@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ | Открытка</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fcf2e9;
+      --surface: #fff;
+      --accent-bg: #41090a;
+      --heading: #80090d;
+      --text: #41090a;
+      --muted: rgba(65, 9, 10, 0.55);
+      --border: rgba(211, 174, 170, 0.5);
+      --rose: #d3aeaa;
+      --font-body: 'Cormorant Garamond', serif;
+      --font-ui: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(165deg, #2d0607, #41090a);
+    }
+
+    .login-card {
+      background: var(--surface);
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .login-title {
+      font-family: var(--font-body);
+      font-size: 1.75rem;
+      color: var(--heading);
+      margin-bottom: 4px;
+    }
+
+    .login-subtitle {
+      color: var(--muted);
+      margin-bottom: 28px;
+      font-size: 0.9rem;
+    }
+
+    .admin-app { min-height: 100vh; }
+
+    .admin-header {
+      background: var(--accent-bg);
+      color: var(--bg);
+      padding: 16px 24px;
+    }
+
+    .admin-header__inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .admin-header h1 {
+      font-family: var(--font-body);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--rose);
+    }
+
+    .admin-header__actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .admin-main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .stat-card__label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .stat-card__value {
+      font-family: var(--font-body);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+
+    .section-title {
+      font-family: var(--font-body);
+      font-size: 1.25rem;
+      color: var(--heading);
+      margin-bottom: 16px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: rgba(211, 174, 170, 0.15);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .ip-cell {
+      font-family: ui-monospace, monospace;
+      font-weight: 500;
+    }
+
+    .empty-msg {
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent-bg);
+      color: var(--bg);
+      border-color: var(--accent-bg);
+    }
+
+    .btn-primary:hover { background: var(--heading); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--bg);
+      border-color: var(--rose);
+    }
+
+    .btn-outline:hover {
+      background: rgba(211, 174, 170, 0.15);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: #c0392b;
+      border-color: #c0392b;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+      color: #fff;
+    }
+
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+    .error-msg {
+      color: #c0392b;
+      font-size: 0.85rem;
+      margin-top: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .refresh-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .ua-cell {
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      th, td { padding: 10px 12px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <h1 class="login-title">Админ-панель</h1>
+      <p class="login-subtitle">Статистика открытки · خديجة</p>
+      <form id="login-form">
+        <label for="admin-code">Код администратора</label>
+        <input type="password" id="admin-code" placeholder="••••••••" required autocomplete="off">
+        <button type="submit" class="btn btn-primary">Войти</button>
+      </form>
+      <p id="login-error" class="error-msg" hidden></p>
+    </div>
+  </div>
+
+  <div id="admin-app" class="admin-app" style="display:none">
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <h1>Открытка · статистика</h1>
+        <div class="admin-header__actions">
+          <a href="/hatidja/" class="btn btn-outline" target="_blank">Открыть открытку</a>
+          <button type="button" id="refresh-btn" class="btn btn-outline">Обновить</button>
+          <button type="button" id="logout-btn" class="btn btn-outline">Выйти</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card__label">Всего просмотров</div>
+          <div class="stat-card__value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Уникальных IP</div>
+          <div class="stat-card__value" id="stat-unique">—</div>
+        </div>
+      </div>
+
+      <section>
+        <div class="toolbar">
+          <h2 class="section-title" style="margin:0">По IP-адресам</h2>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="refresh-note" id="last-updated"></span>
+            <button type="button" id="clear-btn" class="btn btn-danger btn-sm">Очистить статистику</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>IP-адрес</th>
+                <th>Просмотров</th>
+                <th>Первый визит</th>
+                <th>Последний визит</th>
+              </tr>
+            </thead>
+            <tbody id="ip-table-body">
+              <tr><td colspan="4" class="empty-msg">Загрузка…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="margin-top:40px">
+        <h2 class="section-title">Последние визиты</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Дата и время</th>
+                <th>IP-адрес</th>
+                <th>Устройство</th>
+              </tr>
+            </thead>
+            <tbody id="recent-table-body">
+              <tr><td colspan="3" class="empty-msg">Загрузка…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/hatidja/admin.js"></script>
+</body>
+</html>

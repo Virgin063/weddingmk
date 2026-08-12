@@ -57,6 +57,93 @@ function isAdmin(req, res, next) {
   res.status(403).json({ success: false, message: 'Доступ запрещен' });
 }
 
+/* ============================================
+   Статистика просмотров открытки /hatidja
+   ============================================ */
+const HATIDJA_VIEWS_FILE = path.join(DATA_DIR, 'hatidja-views.json');
+
+function loadHatidjaViews() {
+  try {
+    const data = JSON.parse(fs.readFileSync(HATIDJA_VIEWS_FILE, 'utf8'));
+    return Array.isArray(data.views) ? data : { views: [] };
+  } catch {
+    return { views: [] };
+  }
+}
+
+function saveHatidjaViews(data) {
+  fs.writeFileSync(HATIDJA_VIEWS_FILE, JSON.stringify(data, null, 2), 'utf8');
+}
+
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.headers['x-real-ip'] || req.socket.remoteAddress || 'unknown';
+}
+
+function normalizeIp(ip) {
+  if (typeof ip === 'string' && ip.startsWith('::ffff:')) {
+    return ip.slice(7);
+  }
+  return ip;
+}
+
+app.post('/api/hatidja/view', (req, res) => {
+  const data = loadHatidjaViews();
+  const ip = normalizeIp(getClientIp(req));
+
+  data.views.push({
+    ip,
+    userAgent: req.headers['user-agent'] || '',
+    at: new Date().toISOString(),
+  });
+
+  saveHatidjaViews(data);
+  res.json({ success: true });
+});
+
+app.get('/api/admin/hatidja/stats', isAdmin, (req, res) => {
+  const data = loadHatidjaViews();
+  const byIpMap = {};
+
+  for (const view of data.views) {
+    if (!byIpMap[view.ip]) {
+      byIpMap[view.ip] = {
+        ip: view.ip,
+        count: 0,
+        firstSeen: view.at,
+        lastSeen: view.at,
+      };
+    }
+    const entry = byIpMap[view.ip];
+    entry.count += 1;
+    if (view.at < entry.firstSeen) entry.firstSeen = view.at;
+    if (view.at > entry.lastSeen) entry.lastSeen = view.at;
+  }
+
+  const byIp = Object.values(byIpMap).sort(
+    (a, b) => new Date(b.lastSeen) - new Date(a.lastSeen)
+  );
+
+  res.json({
+    totalViews: data.views.length,
+    uniqueIps: byIp.length,
+    byIp,
+    recent: [...data.views].reverse().slice(0, 100),
+  });
+});
+
+app.delete('/api/admin/hatidja/stats', isAdmin, (req, res) => {
+  saveHatidjaViews({ views: [] });
+  res.json({ success: true });
+});
+
+app.get('/hatidja/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'hatidja', 'admin.html'));
+});
+
 app.get('/api/config', (req, res) => {
   res.json(loadConfig());
 });
@@ -98,4 +185,6 @@ app.use(express.static(__dirname));
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Invitation site: http://localhost:${PORT}`);
   console.log(`Admin panel: http://localhost:${PORT}/admin`);
+  console.log(`Hatidja card: http://localhost:${PORT}/hatidja`);
+  console.log(`Hatidja admin: http://localhost:${PORT}/hatidja/admin`);
 });
